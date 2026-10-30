@@ -1,0 +1,20 @@
+// Cores do protótipo HTML (Tailwind: primary, primaryDark, dark e a escala slate)
+export const colors = {
+  primary: '#4f46e5',
+  primaryDark: '#4338ca',
+  primarySoft: '#eef2ff',
+  dark: '#0f172a',
+  white: '#ffffff',
+  background: '#f8fafc',
+  border: '#e2e8f0',
+  borderStrong: '#cbd5e1',
+  text: '#1e293b',
+  textMuted: '#475569',
+  textSubtle: '#94a3b8',
+  orange: '#f97316',
+  orangeSoft: '#ffedd5',
+  orangeText: '#c2410c',
+  red: '#ef4444',
+  green: '#22c55e',
+  yellow: '#facc15',
+};
