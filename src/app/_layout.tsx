@@ -2,6 +2,7 @@ import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { SessionProvider, useSession } from '@/context/SessionContext';
@@ -21,21 +22,23 @@ function Telas() {
     <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: colors.background } }}>
       <Stack.Screen name="index" options={{ title: 'StudyTimeIA' }} />
       <Stack.Screen name="auth" options={{ title: 'Entrar · StudyTimeIA' }} />
-      <Stack.Screen name="plano" options={{ title: 'Meu plano de estudos · StudyTimeIA' }} />
-      <Stack.Screen name="tutor" options={{ title: 'Tutor IA · StudyTimeIA' }} />
+      {/* Área logada (sidebar + Plano + Tutor) */}
+      <Stack.Screen name="(app)" options={{ title: 'StudyTimeIA' }} />
     </Stack>
   );
 }
 
 export default function RootLayout() {
   return (
-    <SafeAreaProvider>
-      <SessionProvider>
-        <ToastProvider>
-          <StatusBar style="dark" />
-          <Telas />
-        </ToastProvider>
-      </SessionProvider>
-    </SafeAreaProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <SafeAreaProvider>
+        <SessionProvider>
+          <ToastProvider>
+            <StatusBar style="dark" />
+            <Telas />
+          </ToastProvider>
+        </SessionProvider>
+      </SafeAreaProvider>
+    </GestureHandlerRootView>
   );
 }

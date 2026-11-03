@@ -16,13 +16,15 @@ const GUIA_KEY = 'studytime-guia-plano-fechado';
 
 /** Abre o Tutor já estudando a matéria (o Tutor envia o pedido sozinho). */
 export function estudarComIA(p: { materia: string; assunto?: string; atividade?: Atividade; minutos?: number }) {
-  router.push({
+  // navigate troca para a tela do Tutor já montada (sem recarregar); "pedido" identifica cada clique
+  router.navigate({
     pathname: '/tutor',
     params: {
       materia: p.materia,
       ...(p.assunto ? { assunto: p.assunto } : {}),
       ...(p.atividade ? { atividade: p.atividade } : {}),
       ...(p.minutos ? { minutos: String(Math.round(p.minutos)) } : {}),
+      pedido: `${Date.now()}`,
     },
   });
 }
@@ -48,7 +50,7 @@ export function PlanoView({
   const cargo = d.cargoConsiderado || plano.cargo;
 
   return (
-    <View style={{ paddingTop: 16 }}>
+    <View style={{ paddingTop: 12 }}>
       {/* Resumo */}
       <View style={styles.hero}>
         <Text style={styles.kicker}>SEU PLANO DE ESTUDOS</Text>
@@ -58,7 +60,7 @@ export function PlanoView({
         </Text>
         <View style={styles.heroBtns}>
           <Button label="Editar" icon="pencil" small onPress={onEditar} style={styles.heroBtnClaro} />
-          <Button label="Tutor IA" icon="chatbubble-ellipses-outline" small onPress={() => router.push('/tutor')} />
+          <Button label="Tutor IA" icon="chatbubble-ellipses-outline" small onPress={() => router.navigate('/tutor')} />
         </View>
         <View style={styles.stats}>
           <Stat icon="calendar-outline" big={`${plano.dias.length} dias`} small="por semana" />
@@ -385,19 +387,19 @@ function Secao({ icon, titulo }: { icon: IconName; titulo: string }) {
 }
 
 const styles = StyleSheet.create({
-  hero: { backgroundColor: colors.dark, borderRadius: radius.lg, padding: 20, gap: 4 },
+  hero: { backgroundColor: colors.dark, borderRadius: radius.lg, padding: 16, gap: 4 },
   kicker: { fontSize: 11, fontWeight: '800', letterSpacing: 1, color: '#a5b4fc' },
   heroTitle: { fontSize: 26, fontWeight: '800', color: colors.white },
   heroSub: { fontSize: 14, color: '#cbd5e1' },
   heroBtns: { flexDirection: 'row', gap: 8, marginTop: 12 },
   heroBtnClaro: { backgroundColor: '#ffffff1a', borderColor: 'transparent' },
-  stats: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginTop: 16 },
-  stat: { flexGrow: 1, flexBasis: '45%', backgroundColor: '#ffffff0d', borderWidth: 1, borderColor: '#ffffff1a', borderRadius: radius.md, padding: 12, gap: 2 },
+  stats: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginTop: 12 },
+  stat: { flexGrow: 1, flexBasis: '22%', minWidth: 130, backgroundColor: '#ffffff0d', borderWidth: 1, borderColor: '#ffffff1a', borderRadius: radius.md, padding: 12, gap: 2 },
   statBig: { color: colors.white, fontWeight: '700', fontSize: 15 },
   statSmall: { color: '#94a3b8', fontSize: 12 },
-  progHead: { flexDirection: 'row', justifyContent: 'space-between', marginTop: 16, marginBottom: 6 },
+  progHead: { flexDirection: 'row', justifyContent: 'space-between', marginTop: 12, marginBottom: 6 },
   progText: { fontSize: 12, color: '#cbd5e1' },
-  abas: { flexDirection: 'row', gap: 4, padding: 4, backgroundColor: '#e2e8f099', borderRadius: radius.md, marginVertical: 16 },
+  abas: { flexDirection: 'row', gap: 4, padding: 4, backgroundColor: '#e2e8f099', borderRadius: radius.md, marginVertical: 12 },
   aba: { flex: 1, minHeight: TOUCH, flexDirection: 'row', gap: 4, alignItems: 'center', justifyContent: 'center', borderRadius: radius.sm },
   abaOn: { backgroundColor: colors.white },
   abaText: { fontSize: 14, fontWeight: '700', color: colors.textMuted },

@@ -7,13 +7,14 @@ import {
   ScrollView,
   StyleSheet,
   Text,
+  useWindowDimensions,
   View,
   type PressableProps,
   type StyleProp,
   type TextStyle,
   type ViewStyle,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, type Edge } from 'react-native-safe-area-context';
 
 import type { IconName } from '@/lib/plan';
 import { colors, MAX_WIDTH, radius, TOUCH } from '@/lib/theme';
@@ -22,17 +23,38 @@ export function Icon({ name, size = 18, color = colors.textMuted }: { name: Icon
   return <Ionicons name={name} size={size} color={color} />;
 }
 
-/** Tela com rolagem, margem de 16 px no celular e largura máxima no computador. */
-export function Screen({ children, header, scroll = true }: { children: ReactNode; header?: ReactNode; scroll?: boolean }) {
+/** Margem lateral proporcional à tela: 12 px (celular estreito), 16 px (celular/tablet), 24 px (computador). */
+export function useGutter() {
+  const { width } = useWindowDimensions();
+  return width < 400 ? 12 : width < 900 ? 16 : 24;
+}
+
+/**
+ * Container principal das telas: rola, usa a largura toda no celular e limita a largura no computador
+ * para o texto não ficar espalhado. `edges` = bordas que respeitam a área segura (entalhe/barra).
+ */
+export function Screen({
+  children,
+  header,
+  scroll = true,
+  edges = ['top', 'left', 'right'],
+}: {
+  children: ReactNode;
+  header?: ReactNode;
+  scroll?: boolean;
+  edges?: Edge[];
+}) {
+  const gutter = useGutter();
+  const container = [styles.container, { paddingHorizontal: gutter }];
   return (
-    <SafeAreaView style={styles.safe} edges={['top', 'left', 'right']}>
+    <SafeAreaView style={styles.safe} edges={edges}>
       {header}
       {scroll ? (
         <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled">
-          <View style={styles.container}>{children}</View>
+          <View style={container}>{children}</View>
         </ScrollView>
       ) : (
-        <View style={[styles.container, { flex: 1 }]}>{children}</View>
+        <View style={[container, { flex: 1 }]}>{children}</View>
       )}
     </SafeAreaView>
   );
@@ -149,8 +171,8 @@ export function Loading({ texto = 'Carregando…' }: { texto?: string }) {
 
 const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: colors.background },
-  scroll: { flexGrow: 1, paddingBottom: 32 },
-  container: { width: '100%', maxWidth: MAX_WIDTH, alignSelf: 'center', paddingHorizontal: 16 },
+  scroll: { flexGrow: 1, paddingBottom: 24 },
+  container: { width: '100%', maxWidth: MAX_WIDTH, alignSelf: 'center' },
   btn: {
     minHeight: TOUCH + 4,
     paddingHorizontal: 18,
@@ -163,7 +185,7 @@ const styles = StyleSheet.create({
   },
   btnSmall: { minHeight: TOUCH, paddingHorizontal: 14 },
   btnText: { fontSize: 16, fontWeight: '700' },
-  card: { backgroundColor: colors.white, borderRadius: radius.lg, borderWidth: 1, borderColor: colors.border, padding: 18 },
+  card: { backgroundColor: colors.white, borderRadius: radius.lg, borderWidth: 1, borderColor: colors.border, padding: 16 },
   title: { fontSize: 18, fontWeight: '700', color: colors.dark },
   muted: { fontSize: 14, color: colors.textMuted, lineHeight: 20 },
   dica: {
@@ -178,5 +200,5 @@ const styles = StyleSheet.create({
   dicaText: { flex: 1, fontSize: 13, lineHeight: 19, color: colors.textMuted },
   tag: { flexDirection: 'row', alignItems: 'center', gap: 4, alignSelf: 'flex-start', paddingHorizontal: 8, paddingVertical: 3, borderRadius: radius.full },
   tagText: { fontSize: 12, fontWeight: '600' },
-  loading: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: 12, paddingVertical: 96 },
+  loading: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: 12, paddingVertical: 48 },
 });

@@ -1,10 +1,9 @@
-// Tela do plano de estudos: assistente (sem plano) → gerando → plano pronto
-import { Redirect } from 'expo-router';
+// Tela do plano de estudos: assistente (sem plano) → gerando → plano pronto.
+// Fica montada dentro da sidebar: ao voltar do Tutor o plano já está na tela, sem novo carregamento.
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { View } from 'react-native';
 
-import { AppHeader } from '@/components/AppHeader';
-import { AdModal, UpgradeModal } from '@/components/Modals';
+import { useModals } from '@/components/Modals';
 import { Gerando } from '@/components/plano/Gerando';
 import { PlanoView } from '@/components/plano/PlanoView';
 import { escolhasIniciais, Wizard, type Escolhas } from '@/components/plano/Wizard';
@@ -18,12 +17,12 @@ import type { Plano } from '@/lib/types';
 type Estado = { tipo: 'carregando' } | { tipo: 'erro'; msg: string } | { tipo: 'wizard' } | { tipo: 'gerando'; concurso: string } | { tipo: 'plano' };
 
 export default function PlanoScreen() {
-  const { carregando, user, perfil, erroPerfil, recarregarPerfil } = useSession();
+  const { user, perfil, erroPerfil, recarregarPerfil } = useSession();
+  const { abrirUpgrade, abrirAnuncio } = useModals();
   const toast = useToast();
   const [plano, setPlano] = useState<Plano | null>(null);
+  // Só existe um "carregando": a primeira leitura do plano salvo (depois ele fica em memória)
   const [estado, setEstado] = useState<Estado>({ tipo: 'carregando' });
-  const [upgrade, setUpgrade] = useState(false);
-  const [anuncio, setAnuncio] = useState(false);
   const gerando = useRef(false);
 
   const carregar = useCallback(async () => {
@@ -52,9 +51,6 @@ export default function PlanoScreen() {
       ativo = false;
     };
   }, [user]);
-
-  if (carregando) return <Loading texto="Carregando sua conta…" />;
-  if (!user) return <Redirect href="/" />;
 
   async function gerar(sel: Escolhas) {
     if (gerando.current) return; // ignora toques repetidos
@@ -90,15 +86,9 @@ export default function PlanoScreen() {
     }
   }
 
-  const header = <AppHeader atual="plano" onUpgrade={() => setUpgrade(true)} />;
-
   let conteudo;
   if (!perfil) {
-    conteudo = erroPerfil ? (
-      <Falha msg={erroPerfil} onTentar={recarregarPerfil} />
-    ) : (
-      <Loading texto="Carregando sua conta…" />
-    );
+    conteudo = erroPerfil ? <Falha msg={erroPerfil} onTentar={recarregarPerfil} /> : <Loading texto="Carregando sua conta…" />;
   } else if (estado.tipo === 'carregando') {
     conteudo = <Loading texto="Carregando seu plano…" />;
   } else if (estado.tipo === 'erro') {
@@ -113,8 +103,8 @@ export default function PlanoScreen() {
         podeCancelar={!!plano}
         onCancelar={() => setEstado({ tipo: 'plano' })}
         onGerar={gerar}
-        onUpgrade={() => setUpgrade(true)}
-        onAnuncio={() => setAnuncio(true)}
+        onUpgrade={abrirUpgrade}
+        onAnuncio={abrirAnuncio}
       />
     );
   } else {
@@ -124,24 +114,19 @@ export default function PlanoScreen() {
         perfil={perfil}
         onEditar={() => setEstado({ tipo: 'wizard' })}
         onMarcar={marcar}
-        onUpgrade={() => setUpgrade(true)}
-        onAnuncio={() => setAnuncio(true)}
+        onUpgrade={abrirUpgrade}
+        onAnuncio={abrirAnuncio}
       />
     );
   }
 
-  return (
-    <Screen header={header}>
-      {conteudo}
-      <UpgradeModal visible={upgrade} onClose={() => setUpgrade(false)} />
-      <AdModal visible={anuncio} onClose={() => setAnuncio(false)} />
-    </Screen>
-  );
+  // O cabeçalho do celular (ou a sidebar fixa) já cuida da área segura do topo
+  return <Screen edges={['left', 'right']}>{conteudo}</Screen>;
 }
 
 function Falha({ msg, onTentar }: { msg: string; onTentar: () => void }) {
   return (
-    <View style={{ alignItems: 'center', gap: 12, paddingVertical: 64 }}>
+    <View style={{ alignItems: 'center', gap: 12, paddingVertical: 48 }}>
       <Muted style={{ textAlign: 'center' }}>{msg}</Muted>
       <Button label="Tentar de novo" icon="refresh" variant="outline" onPress={onTentar} />
     </View>

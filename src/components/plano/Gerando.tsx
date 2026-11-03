@@ -1,5 +1,5 @@
-// Tela de espera enquanto a IA analisa as provas (até ~1 minuto)
-import { useEffect, useState } from 'react';
+// Tela de espera enquanto a IA analisa as provas (até ~1 minuto).
+// Sem progresso simulado por temporizador: o indicador gira até a resposta real da API chegar.
 import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
 
 import { Card, Icon, Muted } from '@/components/ui';
@@ -7,39 +7,29 @@ import { ANO_FIM, ANO_INI } from '@/lib/plan';
 import { colors } from '@/lib/theme';
 
 export function Gerando({ concurso }: { concurso: string }) {
-  const [i, setI] = useState(0);
-  const passos = [
-    `Buscando provas de ${concurso} (${ANO_INI}–${ANO_FIM})`,
-    'Identificando bancas e cargos',
-    'Mapeando os assuntos que mais caem',
-    'Analisando os tipos de questão',
-    'Montando seu cronograma personalizado',
+  const etapas = [
+    `Pesquisa das provas de ${concurso} (${ANO_INI}–${ANO_FIM})`,
+    'Identificação das bancas e cargos',
+    'Assuntos que mais caem',
+    'Tipos de questão da banca',
+    'Seu cronograma personalizado',
   ];
-  useEffect(() => {
-    const t = setInterval(() => setI((n) => Math.min(n + 1, passos.length - 1)), 7000);
-    return () => clearInterval(t);
-  }, [passos.length]);
 
   return (
     <View style={styles.wrap} accessibilityLiveRegion="polite">
       <View style={styles.circulo}>
-        <Icon name="sparkles" size={36} color={colors.white} />
+        <ActivityIndicator size="large" color={colors.white} />
       </View>
       <Text style={styles.h2}>Analisando as provas…</Text>
-      <Muted style={{ textAlign: 'center', marginBottom: 20 }}>
-        Isso pode levar até 1 minuto. A IA está pesquisando provas anteriores e cruzando os dados com suas escolhas.
+      <Muted style={{ textAlign: 'center', marginBottom: 16 }}>
+        Isso pode levar até 1 minuto. Você pode continuar nesta tela: o plano aparece assim que a IA terminar.
       </Muted>
-      <Card style={{ gap: 14, width: '100%' }}>
-        {passos.map((p, j) => (
+      <Card style={{ gap: 12, width: '100%' }}>
+        <Text style={styles.titulo}>O que a IA está montando para você</Text>
+        {etapas.map((p) => (
           <View key={p} style={styles.passo}>
-            {j < i ? (
-              <Icon name="checkmark-circle" size={20} color={colors.green} />
-            ) : j === i ? (
-              <ActivityIndicator size="small" color={colors.primary} />
-            ) : (
-              <Icon name="ellipse-outline" size={20} color={colors.textSubtle} />
-            )}
-            <Text style={[styles.passoText, j > i && { color: colors.textSubtle }, j === i && { fontWeight: '700' }]}>{p}</Text>
+            <Icon name="sparkles-outline" size={18} color={colors.primary} />
+            <Text style={styles.passoText}>{p}</Text>
           </View>
         ))}
       </Card>
@@ -48,9 +38,10 @@ export function Gerando({ concurso }: { concurso: string }) {
 }
 
 const styles = StyleSheet.create({
-  wrap: { maxWidth: 440, width: '100%', alignSelf: 'center', alignItems: 'center', paddingVertical: 40 },
-  circulo: { width: 80, height: 80, borderRadius: 40, backgroundColor: colors.primary, alignItems: 'center', justifyContent: 'center', marginBottom: 20 },
-  h2: { fontSize: 20, fontWeight: '800', color: colors.dark, marginBottom: 8 },
-  passo: { flexDirection: 'row', alignItems: 'center', gap: 12 },
-  passoText: { flex: 1, fontSize: 14, color: colors.text },
+  wrap: { maxWidth: 440, width: '100%', alignSelf: 'center', alignItems: 'center', paddingVertical: 24 },
+  circulo: { width: 72, height: 72, borderRadius: 36, backgroundColor: colors.primary, alignItems: 'center', justifyContent: 'center', marginBottom: 16 },
+  h2: { fontSize: 20, fontWeight: '800', color: colors.dark, marginBottom: 6 },
+  titulo: { fontSize: 14, fontWeight: '700', color: colors.text },
+  passo: { flexDirection: 'row', alignItems: 'center', gap: 10 },
+  passoText: { flex: 1, fontSize: 14, color: colors.textMuted },
 });

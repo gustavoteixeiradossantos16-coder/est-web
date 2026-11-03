@@ -7,6 +7,10 @@ e dados ficam no back-end em Python: [est-api](https://github.com/gustavoteixeir
 
 ## Telas
 
+A área logada tem uma **sidebar padrão** (Expo Router Drawer): fixa à esquerda em telas a partir de 900 px
+e menu lateral (botão ☰ ou arrastar da borda) no celular. Plano e Tutor ficam montados ao trocar de tela,
+então a navegação não recarrega nada.
+
 | Rota | O que faz |
 |---|---|
 | `/` | Página inicial e planos (Free / Premium) |
@@ -14,7 +18,9 @@ e dados ficam no back-end em Python: [est-api](https://github.com/gustavoteixeir
 | `/plano` | Assistente em 3 passos → plano gerado pela IA: cronograma, análise das provas e questões (Premium) |
 | `/tutor` | Chat com o Tutor IA. Vindo de **"Estudar com a IA"**, já envia o pedido da matéria sozinho |
 
-Feito **mobile first**: testado em 360 px e 390 px de largura, sem rolagem lateral e com áreas de toque de 44 px.
+Feito **mobile first**: testado em 360 px, 390 px e 1280 px, sem rolagem lateral, margens de 12–24 px conforme a tela e áreas de toque de 44 px.
+O chat mostra o texto da IA em 14 px, com as quebras de linha (`
+`) preservadas.
 
 ## Rodando localmente
 

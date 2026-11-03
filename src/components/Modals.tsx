@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
 import { Modal, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { useSession } from '@/context/SessionContext';
@@ -143,3 +143,26 @@ const styles = StyleSheet.create({
   adSlot: { aspectRatio: 16 / 9, backgroundColor: '#312e81', alignItems: 'center', justifyContent: 'center', gap: 8 },
   adStatus: { textAlign: 'center', fontSize: 14, color: colors.textMuted },
 });
+
+// ---------------------------------------------------------------- acesso global às janelas
+interface ModalsApi {
+  abrirUpgrade: () => void;
+  abrirAnuncio: () => void;
+}
+const ModalsContext = createContext<ModalsApi>({ abrirUpgrade: () => {}, abrirAnuncio: () => {} });
+
+/** Deixa as janelas de Premium e de anúncio disponíveis para a sidebar e para todas as telas logadas. */
+export function ModalsProvider({ children }: { children: ReactNode }) {
+  const [upgrade, setUpgrade] = useState(false);
+  const [anuncio, setAnuncio] = useState(false);
+  const api = useMemo<ModalsApi>(() => ({ abrirUpgrade: () => setUpgrade(true), abrirAnuncio: () => setAnuncio(true) }), []);
+  return (
+    <ModalsContext.Provider value={api}>
+      {children}
+      <UpgradeModal visible={upgrade} onClose={() => setUpgrade(false)} />
+      <AdModal visible={anuncio} onClose={() => setAnuncio(false)} />
+    </ModalsContext.Provider>
+  );
+}
+
+export const useModals = () => useContext(ModalsContext);

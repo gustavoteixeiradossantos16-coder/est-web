@@ -33,6 +33,6 @@ export const colors = {
 export const radius = { sm: 8, md: 12, lg: 16, full: 999 };
 
 // Largura máxima do conteúdo em telas grandes (no celular ocupa a tela toda)
-export const MAX_WIDTH = 960;
+export const MAX_WIDTH = 1040;
 // Área mínima de toque recomendada
 export const TOUCH = 44;

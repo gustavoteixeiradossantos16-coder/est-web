@@ -75,7 +75,7 @@ export function Wizard({
   const lista = CONCURSOS.filter((c) => c.id === 'outro' || !q || `${c.nome} ${c.area}`.toLowerCase().includes(q));
 
   return (
-    <View style={{ paddingTop: 20 }}>
+    <View style={{ paddingTop: 12 }}>
       <View style={styles.topo}>
         <View style={{ flex: 1 }}>
           <Text style={styles.h1} role="heading">Monte seu plano de estudos</Text>
@@ -133,7 +133,7 @@ export function Wizard({
                     key={c.id}
                     onPress={() => setSel({ ...sel, concursoId: c.id })}
                     accessibilityRole="radio"
-                    accessibilityState={{ checked: on }}
+                    aria-checked={on}
                     style={[styles.concurso, { width: `${100 / colunas - 2}%` }, on && styles.concursoOn]}
                   >
                     <View style={[styles.concursoIcon, on && { backgroundColor: colors.primary }]}>
@@ -181,7 +181,7 @@ export function Wizard({
                     key={d.k}
                     onPress={() => alternarDia(d.k)}
                     accessibilityRole="checkbox"
-                    accessibilityState={{ checked: on }}
+                    aria-checked={on}
                     accessibilityLabel={d.full}
                     style={[styles.dia, on && styles.diaOn]}
                   >
@@ -222,7 +222,8 @@ export function Wizard({
                     key={m}
                     onPress={() => (bloqueado ? onUpgrade() : setSel({ ...sel, minutos: m }))}
                     accessibilityRole="radio"
-                    accessibilityState={{ checked: on, disabled: bloqueado }}
+                    aria-checked={on}
+                    aria-disabled={bloqueado}
                     accessibilityLabel={bloqueado ? `${fmtMin(m)}, só no Premium` : fmtMin(m)}
                     style={[styles.tempo, on && styles.diaOn, bloqueado && { backgroundColor: colors.background }]}
                   >
@@ -293,13 +294,13 @@ function Campo({ label, value, onChange, placeholder }: { label: string; value: 
 }
 
 const styles = StyleSheet.create({
-  topo: { flexDirection: 'row', alignItems: 'flex-start', gap: 12, marginBottom: 16 },
+  topo: { flexDirection: 'row', alignItems: 'flex-start', gap: 12, marginBottom: 12 },
   h1: { fontSize: 26, fontWeight: '800', color: colors.dark },
-  comoFunciona: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 18 },
+  comoFunciona: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 12 },
   comoItem: { flexGrow: 1, flexBasis: 220, flexDirection: 'row', gap: 10, backgroundColor: colors.white, borderWidth: 1, borderColor: colors.border, borderRadius: radius.md, padding: 12 },
   num: { width: 24, height: 24, borderRadius: 12, overflow: 'hidden', backgroundColor: colors.primarySoft, color: colors.primary, fontWeight: '800', fontSize: 12, textAlign: 'center', lineHeight: 24 },
   comoText: { flex: 1, fontSize: 13, lineHeight: 18, color: colors.textMuted },
-  stepper: { flexDirection: 'row', gap: 8, marginBottom: 16 },
+  stepper: { flexDirection: 'row', gap: 8, marginBottom: 12 },
   stepBar: { height: 6, borderRadius: radius.full, backgroundColor: colors.border, marginBottom: 6 },
   stepText: { fontSize: 12, fontWeight: '700', color: colors.textSubtle },
   buscaBox: { flexDirection: 'row', alignItems: 'center', gap: 8, borderWidth: 1, borderColor: colors.borderStrong, borderRadius: radius.md, paddingHorizontal: 12, minHeight: 46 },
