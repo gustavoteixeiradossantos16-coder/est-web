@@ -1,0 +1,7 @@
+# Não enviar para a Vercel
+node_modules/
+dist/
+.expo/
+.env
+.env.*
+!.env.example
